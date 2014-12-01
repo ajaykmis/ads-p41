@@ -184,6 +184,7 @@ struct offset_info * add_key (FILE *fp, int key, long offset ) {
                 retval->right_offset = 0 ; 
                 retval->median = 0 ; 
                 split_node(fp, node, offset, &(retval->left_offset), &(retval->right_offset) , &(retval->median));
+                free(ret);
                 return retval ; 
             }
         } 

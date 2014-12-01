@@ -15,6 +15,7 @@ void print_btree(FILE *fp, long offset){
     int nodes_this_level = 1 ; 
     int nodes_next_level = 0 ; 
     printf(" %d: ", level);
+    debug_printf("Printing btree\n");
     while (!isEmpty(head) ) {
         
         long c_offset = delete_q (&head, &tail); //read the next offset.
@@ -47,7 +48,7 @@ void print_btree(FILE *fp, long offset){
                 printf("\n %d: ", level);
         }
     }
-
+    debug_printf("Exiting Btree\n");
     printf("\n");
 }
 
@@ -83,6 +84,12 @@ int main (int argc, char **argv) {
             buffer[strlen(buffer)-1] = '\0' ;
             //debug_printf("buffer : %s, strlen(buffer) = %lu\n", buffer, strlen(buffer)) ;
             /*Close index file, availability file, student file etc. */         
+            
+            
+            if (buffer[strlen(buffer)-1] == '\r'){
+                buffer[strlen(buffer)-1] = '\0';
+            }
+
             if (!strcmp(buffer,"end") ){
                 debug_printf("exiting.\n"); 
                 fseek(fp, 0, SEEK_SET) ;

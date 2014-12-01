@@ -52,7 +52,7 @@ long delete_q (queue **head, queue **tail) {
         *tail = (*tail)->next ;  
     }
     *head = (*head)->next ;
-    
+    temp->next = NULL ;     
     free(temp);
     return data ; 
 }

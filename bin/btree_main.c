@@ -14,7 +14,7 @@ void print_btree(FILE *fp, long offset){
     enqueue(&head, &tail, offset);
     int nodes_this_level = 1 ; 
     int nodes_next_level = 0 ; 
-    printf("%d: ", level);
+    printf(" %d: ", level);
     while (!isEmpty(head) ) {
         
         long c_offset = delete_q (&head, &tail); //read the next offset.
@@ -26,9 +26,10 @@ void print_btree(FILE *fp, long offset){
             return ; 
         }
         
-        for (int j = 0 ; j < node->n ; j++){
-            printf("%d, ", node->key[j]);
+        for (int j = 0 ; j < (node->n -1) ; j++){
+            printf("%d,", node->key[j]);
         }
+        printf("%d ", node->key[node->n -1]); 
         for (int i=0 ; i <= node->n ; i++ ){
         
             if (node->child[i] !=0)
@@ -40,19 +41,31 @@ void print_btree(FILE *fp, long offset){
 
         if (nodes_this_level == 0 ){
             level++ ; 
-            printf("\n%d: ", level);
             nodes_this_level = nodes_next_level ; 
             nodes_next_level = 0 ; 
+            if (nodes_this_level != 0 )
+                printf("\n %d: ", level);
         }
     }
+
+    printf("\n");
 }
 
 int main (int argc, char **argv) {
 
 
     FILE *fp; /* Input file stream */ 
+    
+    if (argc < 3 ) {
+        
+        fprintf(stderr, "Insufficient Arguments: Usage: ./assn4 <index filename> <order>\n");
+        exit(-1);
+    }
+    
     btree_order = atoi(argv[2]);
     fp = fopen(argv[1], "r+b");
+    count = 0 ; 
+    
     if (fp == NULL) {
         
         root_offset = -1 ; 
@@ -60,15 +73,15 @@ int main (int argc, char **argv) {
         fwrite(&root_offset, sizeof(long),1,fp);
     }
     else {
-        debug_printf("file already existing: root_offset:%ld\n", root_offset);
         fread(&root_offset, sizeof(long), 1, fp);
+        debug_printf("file already existing: root_offset:%ld\n", root_offset);
     }
     char buffer[100];
     while(1) {
         if (fgets(buffer, sizeof(buffer), stdin)) {
             char *temp = buffer ; 
             buffer[strlen(buffer)-1] = '\0' ;
-            debug_printf("buffer : %s, strlen(buffer) = %lu\n", buffer, strlen(buffer)) ;
+            //debug_printf("buffer : %s, strlen(buffer) = %lu\n", buffer, strlen(buffer)) ;
             /*Close index file, availability file, student file etc. */         
             if (!strcmp(buffer,"end") ){
                 debug_printf("exiting.\n"); 
@@ -77,6 +90,11 @@ int main (int argc, char **argv) {
                 fwrite(&root_offset, sizeof(long),1,fp);
                 fclose( fp );
                 exit(1) ;
+            }
+
+            if (!strcmp(buffer, "print")) {
+                    print_btree(fp, root_offset);
+                    continue ; 
             }
 
             if( (temp = strchr(buffer,' ') ) ) {
@@ -91,16 +109,17 @@ int main (int argc, char **argv) {
                     ret = add_key(fp, sid, root_offset);
                     if (ret != NULL) 
                     {
-                        int s = 0 ; 
                         btree_node *node = newNode(btree_order);
-                        node->key[s] = ret->median ;
-                        node->child[s] = ret->right_offset ; 
+                        node->key[node->n++] = ret->median ;
                         node->child[0] = ret->left_offset ; 
-                        node->n++ ;
+                        node->child[1] = ret->right_offset ; 
+
                         //compare the new length 
                         if (node->n <= btree_order -1){
                             //just copy the new list in parent. 
                             root_offset = write_btree_node(fp, node, -1, btree_order) ; 
+                            file_offset[count++] = root_offset;
+                            debug_printf("New Root node created at offset:%ld \n", root_offset);
                             free(ret);
                         } else {
                            debug_printf("Shouldnt split here\n");
@@ -122,8 +141,16 @@ int main (int argc, char **argv) {
                     }
                 }
                 else if(!strcmp(buffer,"print")) {
-                    debug_printf("printing index\n") ; 
-                    print_btree(fp, root_offset);
+                    debug_printf("printing %s\n", temp) ; 
+                    if (!strcmp(temp, "offset")){
+                        
+                        //print_buffer(file_offset, count);
+                    }else {
+                        long c_offset = atol(temp);
+                        btree_node *node = read_btree_node(fp, c_offset, btree_order);
+                        print_node(node); 
+                        free(node);
+                    }
                 }
                 else {
                     fprintf(stderr, "Wrong token\n") ;

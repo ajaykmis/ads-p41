@@ -33,6 +33,11 @@ struct offset_info {
 
 };
 
+/*to track unique file offsets*/
+long file_offset[1000];
+int count ; 
+
+
 btree_node * newNode(int order); 
 int find_key(FILE *fp, int target, long offset);
 void free_node(btree_node *node); 
@@ -40,4 +45,5 @@ struct offset_info  * add_key (FILE *fp, int key, long offset );
 void print_node(btree_node *node);
 btree_node* read_btree_node(FILE *fp, long offset , int order) ; 
 int write_btree_node(FILE *fp, btree_node *node, long offset, int order ); 
+void print_buffer(int *, int );
 #endif 

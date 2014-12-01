@@ -7,16 +7,19 @@
 
 void print_node(btree_node *node){
 
-    printf("Node number of keys: %d\n", node->n);
+    #ifdef DEBUG_PRINT 
+
     printf("keys:\n");
-    for(int i=0 ; i < ( btree_order -1) ; i++) {
+    for(int i=0 ; i < (node->n) ; i++) {
         printf("%d ",node->key[i] );
     }
     printf("\nChild Offsets:\n");
-    for(int i=0 ; i< btree_order ; i++) {
+    for(int i=0 ; i<= node->n ; i++) {
         printf("%ld ", node->child[i]);
     }
     printf("\n");
+
+    #endif
 }
 
 btree_node* read_btree_node(FILE *fp, long offset , int order) {
@@ -38,7 +41,6 @@ btree_node* read_btree_node(FILE *fp, long offset , int order) {
 
 int write_btree_node(FILE *fp, btree_node *node, long offset, int order ) {
 
-    debug_printf("offset asked to write: %ld\n", offset);
     if (offset != -1) 
         fseek( fp, offset, SEEK_SET ); 
     else 

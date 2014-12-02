@@ -49,8 +49,18 @@ int cmpfunc (const void * a, const void * b)
 {
     int *ptr1 = (int *)a ; 
     int *ptr2 = (int *)b ;    
-    debug_printf("ptr1: %d, ptr2:%d\n", *ptr1, *ptr2);
-    return ( *ptr1 - *ptr2 );
+    debug_printf("ptr1: %d, ptr2:%d ptr1-ptr2:%d\n", *ptr1, *ptr2, (*ptr1 - *ptr2));
+    //return ( *ptr1 - *ptr2 );
+    
+    if (*ptr1 < *ptr2) {
+        return -1 ;
+        }
+    else if (*ptr1 > *ptr2) {
+        return 1 ; 
+    }
+    else {
+        return 0 ; 
+    }
 }
 
 btree_node * newNode(int order) {
@@ -195,9 +205,11 @@ struct offset_info * add_key (FILE *fp, int key, long offset ) {
 
         node->key[node->n++] = key ; 
         //void qsort(void *base, size_t nitems, size_t size, int (*compar)(const void *, const void*))
+        debug_printf("Printing %d the array before sorting\n", node->n);
+        print_buffer(node->key, node->n);
         qsort(node->key, node->n , sizeof(int), cmpfunc ) ; 
         debug_printf("Printing %d the array after sorting\n", node->n);
-        //print_buffer(node->key, node->n);
+        print_buffer(node->key, node->n);
        
         //compare the new length 
         if (node->n <= btree_order -1){

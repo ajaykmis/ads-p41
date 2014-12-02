@@ -95,7 +95,6 @@ void split_node (FILE *fp, btree_node *node, long offset, long *left_offset, lon
     for (int j= 0 ; j <= r_node->n ; j++ ) {
         r_node->child[j] = node->child[j + m +1];
     }
-    file_offset[count++] = *right_offset ; 
     *right_offset = write_btree_node(fp, r_node, -1, btree_order  );
     debug_printf("Right Node offset: %ld\n", *right_offset);
     print_node(r_node);
@@ -112,7 +111,6 @@ struct offset_info * add_key (FILE *fp, int key, long offset ) {
         node = newNode(btree_order) ;
         node->key[node->n++] = key ;
         root_offset = write_btree_node(fp, node, offset, btree_order);
-        file_offset[count++] = root_offset ; 
         debug_printf("Root offset: %ld\n", root_offset);
         //push(&head, root_offset);
         return  NULL; 

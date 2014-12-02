@@ -4,7 +4,8 @@
 
 void enqueue (queue **head, queue **tail,  long data ) {
 
-    queue *ptr = (queue *) malloc(sizeof(queue *));
+    queue *ptr = NULL ; 
+    ptr = (queue *) malloc(sizeof(queue));
     ptr->data = data ; 
     ptr->next = NULL ; // if head is NULL
     

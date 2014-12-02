@@ -1,6 +1,8 @@
 #ifndef QUEUE_H
 #define QUEUE_H
 
+#include<stdint.h>
+
 typedef struct queue_t{
     long data ; 
     struct queue_t *next ; 

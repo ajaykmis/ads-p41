@@ -65,7 +65,6 @@ int main (int argc, char **argv) {
     
     btree_order = atoi(argv[2]);
     fp = fopen(argv[1], "r+b");
-    count = 0 ; 
     
     if (fp == NULL) {
         
@@ -85,13 +84,11 @@ int main (int argc, char **argv) {
             //debug_printf("buffer : %s, strlen(buffer) = %lu\n", buffer, strlen(buffer)) ;
             /*Close index file, availability file, student file etc. */         
             
-            
             if (buffer[strlen(buffer)-1] == '\r'){
                 buffer[strlen(buffer)-1] = '\0';
             }
 
             if (!strcmp(buffer,"end") ){
-                debug_printf("exiting.\n"); 
                 fseek(fp, 0, SEEK_SET) ;
                 debug_printf("Writing root offset back to file: %ld\n", root_offset);
                 fwrite(&root_offset, sizeof(long),1,fp);
@@ -125,7 +122,6 @@ int main (int argc, char **argv) {
                         if (node->n <= btree_order -1){
                             //just copy the new list in parent. 
                             root_offset = write_btree_node(fp, node, -1, btree_order) ; 
-                            file_offset[count++] = root_offset;
                             debug_printf("New Root node created at offset:%ld \n", root_offset);
                             free(ret);
                         } else {
@@ -151,7 +147,6 @@ int main (int argc, char **argv) {
                     debug_printf("printing %s\n", temp) ; 
                     if (!strcmp(temp, "offset")){
                         
-                        //print_buffer(file_offset, count);
                     }else {
                         long c_offset = atol(temp);
                         btree_node *node = read_btree_node(fp, c_offset, btree_order);

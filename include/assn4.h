@@ -33,9 +33,6 @@ struct offset_info {
 
 };
 
-/*to track unique file offsets*/
-long file_offset[1000];
-int count ; 
 
 
 btree_node * newNode(int order); 
